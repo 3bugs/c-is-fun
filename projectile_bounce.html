@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<img id="tonyod200" width="100" height="100" src="images/tonyod.png" alt="ต้นยอด">
+<div><button type="button" onclick="go()">Go!</button></div>
+<canvas id="myCanvas" width="1000" height="600" style="border:1px solid #000000;">
+Your browser does not support the HTML5 canvas tag.
+</canvas>
+<img id="tonyod" width="50" height="50" src="images/tonyod-50x50.png" alt="ต้นยอด" style="visibility: hidden;">
+
+<script>
+    const c = document.getElementById("myCanvas");
+    const ctx = c.getContext("2d");
+    const img = document.getElementById("tonyod");
+    drawText();
+
+    let timer = null;
+
+    function go() {
+		let xVelocity = 10, yVelocity = 100;
+        let x = 0, y = c.height;
+        let xDistance = 0;
+        let t = 0;
+
+        ctx.clearRect(0, 0, c.width, c.height);
+        if (timer) clearInterval(timer);
+
+        timer = setInterval(() => {
+            //การคำนวณเส้นทาง projectile อยู่ที่ 2 บรรทัดนี้
+            //สูตรคือ s = ut + (0.5)at^2
+            x = xDistance + xVelocity * t; //แนวราบ ความเร็วคงที่ (ความเร่ง = 0)
+            y = yVelocity * t - (5 * Math.pow(t, 2)); //แนวดิ่ง ความเร่ง -10
+
+            drawImage(x, y);
+            //drawBall(x, y);
+            t += 0.2;
+            
+            //ให้บอลกระเด้งขึ้นใหม่
+            if (y < 0) {
+                yVelocity /= 1.15;
+                t = 0;
+                xDistance = x;
+            }
+
+            if (x > c.width + 10) clearInterval(timer);
+        }, 10);
+    }
+    
+    function drawBall(x, y) {
+        ctx.clearRect(0, 0, c.width, c.height);
+        drawText();
+
+        ctx.beginPath();
+        ctx.arc(x, c.height - y, 10, 0, 2 * Math.PI);
+        ctx.fillStyle = "blue";
+        ctx.fill();
+    }
+
+    function drawImage(x, y) {
+        ctx.clearRect(0, 0, c.width, c.height);
+        drawText();
+
+        ctx.drawImage(img, x, (c.height - y) - 50);
+    }
+
+    function drawText() {
+        ctx.textAlign = 'center';
+        ctx.font = 'normal 50px tahoma';  
+        ctx.fillStyle = "pink";
+        ctx.fillText("ต้นยอด No.20", 500, 300); 
+    }
+</script>
+
+</body>
+</html>

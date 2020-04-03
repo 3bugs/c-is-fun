@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+
+<body>
+    <canvas id="myCanvas" width="600" height="600" style="border:1px solid #000000;">
+        Your browser does not support the HTML5 canvas tag.
+    </canvas>
+
+    <script>
+        const c = document.getElementById("myCanvas");
+        const ctx = c.getContext("2d");
+        const center = { x: 262, y: 369 };
+
+        var bgImage = new Image();
+        bgImage.src = "images/base_map.png";
+        bgImage.onload = function () {
+            ctx.drawImage(bgImage, 0, 0, c.width, c.height);
+        }
+
+        c.addEventListener('click', e => {
+            const x = e.pageX - c.offsetLeft;
+            const y = e.pageY - c.offsetTop;
+            //alert(`x: ${x}, y: ${y}`);
+
+            /* ctx.beginPath();
+            ctx.moveTo(x, y);
+            ctx.lineTo(center.x, center.y);
+            ctx.lineWidth = 1;
+            ctx.strokeStyle = 'rgba(0, 192, 0, 0.3)';
+            ctx.stroke(); */
+
+            showAnimation({
+                beginPoint: { x, y },
+                endPoint: { x: center.x, y: center.y }
+            });
+        });
+
+        function showAnimation({ beginPoint, endPoint }) {
+            const STEP = 20;
+            const distanceX = Math.abs(beginPoint.x - endPoint.x);
+            const distanceY = Math.abs(beginPoint.y - endPoint.y);
+            const distance = Math.sqrt(Math.pow(distanceX, 2) + Math.pow(distanceY, 2));
+
+            const deltaX = (endPoint.x > beginPoint.x ? 1 : -1) * (distanceX * STEP) / distance;
+            const deltaY = (endPoint.y > beginPoint.y ? 1 : -1) * (distanceY * STEP) / distance;
+            //alert(`deltaX: ${deltaX}, deltaY: ${deltaY}`);
+
+            let currentX = beginPoint.x;
+            let currentY = beginPoint.y;
+
+            const timer = setInterval(() => {
+                console.log(`currentX: ${currentX}, currentY: ${currentY}`);
+
+                ctx.drawImage(bgImage, 0, 0, c.width, c.height);
+
+                ctx.beginPath();
+                ctx.moveTo(beginPoint.x, beginPoint.y);
+                ctx.lineTo(endPoint.x, endPoint.y);
+                ctx.lineWidth = 1;
+                ctx.strokeStyle = 'rgba(0, 192, 0, 0.3)';
+                ctx.stroke();
+
+                if ((deltaX > 0 && currentX > endPoint.x) || (deltaX < 0 && currentX < endPoint.x)) {
+                    clearInterval(timer);
+                    return;
+                }
+
+                const oldGlobalCompositeOperation = ctx.globalCompositeOperation;
+                if (currentX !== beginPoint.x) {
+                    /* ctx.globalCompositeOperation = "destination-out";
+                    ctx.beginPath();
+                    ctx.arc(currentX - deltaX, currentY - deltaY, 5, 0, 2 * Math.PI);
+                    ctx.fillStyle = 'rgba(0, 0, 0, 1)';
+                    ctx.fill(); */
+                }
+
+                ctx.globalCompositeOperation = oldGlobalCompositeOperation;
+                ctx.beginPath();
+                ctx.arc(currentX, currentY, 5, 0, 2 * Math.PI);
+                ctx.fillStyle = 'rgba(0, 255, 0, 0.5)';
+                ctx.fill();
+
+                currentX += deltaX;
+                currentY += deltaY;
+            }, 20);
+        }
+    </script>
+</body>
+
+</html>

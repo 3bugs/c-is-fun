@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<div style="margin-bottom: 10px;">
+    <input id="n" type="number"/>
+    <button type="button" onclick="go()">Go!</button>
+</div>
+<canvas id="myCanvas" width="800" height="800" style="border:1px solid #000000;">
+Your browser does not support the HTML5 canvas tag.
+</canvas>
+
+<script>
+    let n = 15;
+
+    const board = [];
+    const c = document.getElementById("myCanvas");
+    let cellWidth, cellHeight;
+    const ctx = c.getContext("2d");
+
+    let timer = null;
+
+    function go() {
+        n = parseInt(document.getElementById("n").value);
+        if (isNaN(n) || n <= 0) {
+            alert('กรอกตัวเลขที่มากกว่า 0');
+            return;
+        }             
+
+        cellWidth = c.width / (n + 1);
+        cellHeight = c.height / (n + 1);
+
+        board.length = 0;
+        for (let i = 0; i < n; i++) {
+            board[i] = [];
+        }
+
+        let row = 0, col = 0;
+        let direction = 0;  // 0 = go right
+                            // 1 = go down
+                            // 2 = go left
+                            // 3 = go up
+        let value = 1;
+
+        ctx.clearRect(0, 0, c.width, c.height);
+        if (timer) clearInterval(timer);
+
+        timer = setInterval(() => {
+            if (value >= n * n) clearInterval(timer);
+
+            const oldRow = row, oldCol = col;
+            board[row][col] = value++;
+            console.log(`[${row}, ${col}]: ${value}`);
+
+            if (direction == 0) {
+                if (col < n - 1 && board[row][col + 1] == undefined) {
+                    col++;
+                } else {
+                    row++;
+                    direction = 1;
+                }
+            } else if (direction == 1) {
+                if (row < n - 1 && board[row + 1][col] == undefined) {
+                    row++;
+                } else {
+                    col--;
+                    direction = 2;
+                }
+            } else if (direction == 2) {
+                if (col > 0 && board[row][col - 1] == undefined) {
+                    col--;
+                } else {
+                    row--;
+                    direction = 3;
+                }
+            } else if (direction == 3) {
+                if (row > 0 && board[row - 1][col] == undefined) {
+                    row--;
+                } else {
+                    col++;
+                    direction = 0;
+                }
+            }
+
+            drawBoard(oldRow, oldCol);
+        }, 50);
+
+		/* timer = setInterval(() => {
+            if (start >= end) clearInterval(timer);
+
+            for (let col = start; col < end; col++) {
+                board[start][col] = ++value;
+            }
+            for (let row = start; row < end; row++) {
+                board[row][end] = ++value;
+            }
+            for (let col = end; col > start; col--) {
+                board[end][col] = ++value;
+            }
+            for (let row = end; row > start; row--) {
+                board[row][start] = ++value;
+            }
+            start++;
+            end--;
+
+            drawBoard();
+        }, 1000); */
+    }
+    
+    function drawBoard(currentRow, currentCol) {
+        ctx.clearRect(0, 0, c.width, c.height);
+
+        for (let row = 0; row < n; row++) {
+            for (let col = 0; col < n; col++) {
+                const x = (col + 1) * cellWidth;
+                const y = (row + 1) * cellHeight;
+                
+                /* if (currentRow === row && currentCol === col)
+                    drawCircle(x, y); */
+
+                drawText(board[row][col], x, y);
+            }
+        }
+    }
+
+    function drawCircle(x, y) {
+        ctx.beginPath();
+        ctx.arc(x, y, 20, 0, 2 * Math.PI);
+        ctx.fillStyle = "pink";
+        ctx.fill();
+    }
+
+    function drawText(text, x, y) {
+        if (text) {
+            ctx.textAlign = 'center';
+            ctx.font = 'bold 32px arial';  
+            ctx.fillStyle = "black";
+            ctx.fillText(text, x, y + 4); 
+        }
+    }
+</script>
+
+</body>
+</html>

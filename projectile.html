@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<div><button type="button" onclick="go()">โยน!</button></div>
+<canvas id="myCanvas" width="800" height="600" style="border:1px solid #000000;">
+Your browser does not support the HTML5 canvas tag.
+</canvas>
+
+<script>
+    const c = document.getElementById("myCanvas");
+    const ctx = c.getContext("2d");
+    drawText();
+
+    let xVelocity = 40, yVelocity = 100;
+    let timer = null;
+
+    function go() {
+        let x = 0, y = c.height;
+        let t = 0;
+
+        ctx.clearRect(0, 0, c.width, c.height);
+        if (timer) clearInterval(timer);
+
+        timer = setInterval(() => {
+            //การคำนวณเส้นทาง projectile อยู่ที่ 2 บรรทัดนี้
+            //สูตรคือ s = ut + (0.5)at^2
+            x = xVelocity * t; //แนวราบ ความเร็วคงที่ (ความเร่ง = 0)
+            y = yVelocity * t - (5 * Math.pow(t, 2)); //แนวดิ่ง ความเร่ง -10
+
+            drawBall(x, y);
+            t += 0.2;
+
+            if (y < 0) clearInterval(timer);
+        }, 15);
+    }
+    
+    function drawBall(x, y) {
+        ctx.clearRect(0, 0, c.width, c.height);
+        drawText();
+
+        ctx.beginPath();
+        ctx.arc(x, c.height - y, 10, 0, 2 * Math.PI);
+        ctx.fillStyle = "blue";
+        ctx.fill();
+    }
+
+    function drawText() {
+        ctx.textAlign = 'center';
+        ctx.font = 'normal 25px tahoma';  
+        ctx.fillStyle = "pink";
+        ctx.fillText("การเคลื่อนที่แบบ Projectile", 400, 300); 
+    }
+</script>
+
+</body>
+</html>

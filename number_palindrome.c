@@ -8,6 +8,7 @@ int main() {
 
 	printf("Enter n to find all palindromic whole numbers between 1 and n: ");
 	scanf("%d", &n);
+	printf("\n");
 
     for (int i = 1; i <= n; i++) {
 		if (is_palindrome(i)) {
